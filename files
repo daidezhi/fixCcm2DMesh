@@ -1,3 +1,0 @@
-fixCcm2DMesh.C
-
-EXE = $(FOAM_USER_APPBIN)/fixCcm2DMesh
