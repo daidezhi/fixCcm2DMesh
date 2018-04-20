@@ -50,35 +50,35 @@ int main(int argc, char *argv[])
     
     const bool overwrite = args.optionFound("overwrite");
     
-	pointField points(mesh.points());
+    pointField points(mesh.points());
     faceList faces(mesh.faces());
     cellList cells(mesh.cells());
 
-	labelList fo(mesh.faceOwner());
-	labelList fn(mesh.faceNeighbour());
+    labelList fo(mesh.faceOwner());
+    labelList fn(mesh.faceNeighbour());
 	
-	forAll(fo, faceI)
+    forAll(fo, faceI)
+    {
+	vector v1(points[faces[faceI][1]][1]-points[faces[faceI][0]][1], points[faces[faceI][0]][0]-points[faces[faceI][1]][0], 0);
+	    
+	scalar s1(0);
+	    
+	if(faceI < fn.size())
 	{
-	    vector v1(points[faces[faceI][1]][1]-points[faces[faceI][0]][1], points[faces[faceI][0]][0]-points[faces[faceI][1]][0], 0);
-	    
-	    scalar s1(0);
-	    
-	    if(faceI < fn.size())
-	    {
-	        s1 = v1 & (mesh.C()[fn[faceI]] - mesh.C()[fo[faceI]]);
-	    }
-	    else
-	    {
-	        s1 = v1 & (mesh.Cf()[faceI] - mesh.C()[fo[faceI]]);
-	    }
-	    
-	    if(s1 < 0)
-	    {
-	        label l1(faces[faceI][0]);
-	        faces[faceI][0] = faces[faceI][1];
-	        faces[faceI][1] = l1;
-	    }
+	    s1 = v1 & (mesh.C()[fn[faceI]] - mesh.C()[fo[faceI]]);
 	}
+	else
+	{
+	    s1 = v1 & (mesh.Cf()[faceI] - mesh.C()[fo[faceI]]);
+	}
+	    
+	if(s1 < 0)
+	{
+	    label l1(faces[faceI][0]);
+	    faces[faceI][0] = faces[faceI][1];
+	    faces[faceI][1] = l1;
+        }
+    }
 	
     
     const polyBoundaryMesh& patches = mesh.boundaryMesh();
